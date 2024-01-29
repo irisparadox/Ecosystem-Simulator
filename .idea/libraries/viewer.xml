@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="viewer">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/viewer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
