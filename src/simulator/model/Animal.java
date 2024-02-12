@@ -30,6 +30,12 @@ public abstract class Animal implements AnimalInfo {
                      double init_speed, SelectionStrategy mate_strategy, Vector2D pos) throws IllegalArgumentException {
         if(genetic_code.length() == 0)
             throw new IllegalArgumentException(ExceptionMessages.INVALID_GENETIC_CODE_LENGTH);
+        else if(sight_range < 0)
+            throw new IllegalArgumentException(ExceptionMessages.INVALID_SIGHT_RANGE);
+        else if(init_speed < 0)
+            throw new IllegalArgumentException(ExceptionMessages.INVALID_SPEED);
+        else if(mate_strategy == null)
+            throw new IllegalArgumentException(ExceptionMessages.INVALID_STRATEGY);
         this._diet = diet;
         this._genetic_code = genetic_code;
         this._sight_range = sight_range;
@@ -76,22 +82,30 @@ public abstract class Animal implements AnimalInfo {
         if (this._pos == null) {
             x = Utils._rand.nextDouble(0,width - 1);
             y = Utils._rand.nextDouble(0,height - 1);
+            this._pos = new Vector2D(x,y);
         } else {
-            x = this._pos.getX();
-            y = this._pos.getY();
-            while (x >= width) x = (x - width);
-            while (x < 0) x = (x + width);
-            while (y >= height) y = (y - height);
-            while (y < 0) y = (y + height);
+            this._pos = adjust_position();
         }
 
-        this._pos = new Vector2D(x, y);
         x = Utils._rand.nextDouble(0,width - 1);
         y = Utils._rand.nextDouble(0,height - 1);
         this._dest = new Vector2D(x, y);
     }
 
-    Animal deliverBaby(){
+    protected Vector2D adjust_position(){
+        double w = _region_mngr.get_width();
+        double h = _region_mngr.get_height();
+        double x = this._pos.getX();
+        double y = this._pos.getY();
+        while (x >= w) x = (x - w);
+        while (x < 0) x = (x + w);
+        while (y >= h) y = (y - h);
+        while (y < 0) y = (y + h);
+
+        return new Vector2D(x,y);
+    }
+
+    Animal deliver_baby(){
         Animal baby = this._baby;
         this._baby = null;
         return baby;
