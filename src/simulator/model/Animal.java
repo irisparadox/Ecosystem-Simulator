@@ -1,12 +1,11 @@
 package simulator.model;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import simulator.extra.ExceptionMessages;
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
-public abstract class Animal implements AnimalInfo {
+public abstract class Animal implements Entity, AnimalInfo {
     protected final static double POSITION_SCALE_FACTOR = 60.0;
     protected final static double RANDOM_TOLERANCE = 0.2;
     protected final static double INITIAL_ENERGY = 100.0;
@@ -115,7 +114,7 @@ public abstract class Animal implements AnimalInfo {
         this._pos = this._pos.plus(_dest.minus(_pos).direction().scale(speed));
     }
 
-    public JSONObject asJSON(){
+    public JSONObject as_JSON(){
         JSONObject o = new JSONObject();
         o.put("pos",this._pos.asJSONArray());
         o.put("gcode",this._genetic_code);
