@@ -1,33 +1,44 @@
 package simulator.model;
 
-import simulator.extra.ExceptionMessages;
 import simulator.misc.Utils;
 
 public class DynamicSupplyRegion extends Region {
-    private final double _growth_factor;
-    private double _food;
-    public DynamicSupplyRegion(double init_food, double growth_factor) throws IllegalArgumentException{
-        if(init_food < 0) throw new IllegalArgumentException(ExceptionMessages.INVALID_FOOD_ARGUMENT);
-        else if(growth_factor < 0) throw new IllegalArgumentException(ExceptionMessages.INVALID_FOOD_GROWTH);
-        _food = init_food;
-        _growth_factor = growth_factor;
-    }
 
-    @Override
-    public double get_food(Animal a, double dt) {
-        double food;
-        if(a.get_diet() == Diet.CARNIVORE)
-            food = 0;
-        else
-            food = Math.min(_food,FOOD_MULTIPLIER * Math.exp(-Math.max(0,
-                    get_herbivore_animals() - ANIMAL_COUNT_FACTOR) * EXP_MULTIPLIER) * dt);
+	public static final double CONST1 = 60.0;
+	public static final double CONST2 = 5.0;
+	public static final double CONST3 = 2.0;
 
-        _food -= food;
-        return food;
-    }
+	private double _food;
+	private double _factor;
 
-    @Override
-    public void update(double dt) {
-        if(Utils._rand.nextDouble() < 0.5) _food = dt * _growth_factor;
-    }
+	public DynamicSupplyRegion(double ini_food, double factor) {
+		this._food = ini_food;
+		this._factor = factor;
+	}
+
+	@Override
+	public double get_food(Animal a, double dt) {
+		double ret = 0;
+
+		if (a._diet != Diet.CARNIVORE) {
+			int n = 0;
+			for (Animal an : this.animal_list) {
+				if (an._diet == Diet.HERBIVORE)
+					n++;
+			}
+
+			ret = Math.min(_food, CONST1 * Math.exp(-Math.max(0, n - CONST2) * CONST3) * dt);
+
+			this._food -= ret;
+		}
+
+		return ret;
+	}
+
+	@Override
+	public void update(double dt) {
+		if (Utils._rand.nextDouble() > 0.5) {
+			this._food += dt * _factor;
+		}
+	}
 }
