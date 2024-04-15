@@ -1,10 +1,7 @@
 package simulator.model;
 
-import java.util.List;
-import java.util.LinkedList;
+import java.util.*;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.function.Predicate;
 
 import org.json.JSONArray;
@@ -201,4 +198,14 @@ public class RegionManager implements AnimalMapView {
 		return ret;
 	}
 
+	/**
+	 * Returns an iterator over elements of type {@code T}.
+	 *
+	 * @return an Iterator.
+	 */
+	@Override
+	public Iterator<RegionData> iterator() {
+		Iterator<RegionData> iterator;
+		return null;
+	}
 }

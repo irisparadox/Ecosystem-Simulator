@@ -67,16 +67,16 @@ public class Main {
 	private static Double _time = null;
 	private static String _in_file = null;
 	private static ExecMode _mode = ExecMode.BATCH;
-	private static double dt;
+	public static double dt;
 	// private static double time;
 	private static String outFile;
 	private static ExecMode mode;
 	private static Controller controller;
 	private static boolean sv;
 
-	private static Factory<Animal> _animal_factory;
-	private static Factory<SelectionStrategy> _strategy_factory;
-	private static Factory<Region> _region_factory;
+	public static Factory<Animal> _animal_factory;
+	public static Factory<SelectionStrategy> _strategy_factory;
+	public static Factory<Region> _region_factory;
 
 	private static void parse_args(String[] args) throws FileNotFoundException {
 
@@ -172,7 +172,7 @@ public class Main {
 	}
 
 	private static void parse_output_option(CommandLine line) throws ParseException {
-		if (line.hasOption("O")) {
+		if (line.hasOption("o")) {
 			outFile = line.getOptionValue("o");
 		}
 	}
@@ -225,7 +225,7 @@ public class Main {
 		JSONObject json = load_JSON_file(is);
 
 		// 2
-		FileOutputStream out = new FileOutputStream(new File("out"));
+		FileOutputStream out = new FileOutputStream(new File(outFile));
 		// 3
 		int width = json.getInt("width");
 		int height = json.getInt("height");

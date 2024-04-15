@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import simulator.model.AnimalInfo;
+import simulator.model.EcoSysObserver;
 import simulator.model.MapInfo;
 import simulator.model.Simulator;
 import simulator.view.SimpleObjectViewer;
@@ -101,8 +102,28 @@ public class Controller {
 		List<ObjInfo> ol = new ArrayList<>(animals.size());
 		for (AnimalInfo a : animals)
 			ol.add(new ObjInfo(a.get_genetic_code(), (int) a.get_position().getX(), (int) a.get_position().getY(),
-					 (int) Math.round(a.get_age()) + 2));
+					(int) Math.round(a.get_age()) + 2));
 
 		return ol;
+	}
+
+	public void reset(int cols, int rows, int width, int height) {
+		_sim.reset(cols, rows, width, height);
+	}
+
+	public void set_regions(JSONObject rs){
+
+	}
+
+	public void advance(double dt) {
+		_sim.advance(dt);
+	}
+
+	public void addObserver(EcoSysObserver o){
+		_sim.addObserver(o);
+	}
+
+	public void removeObserver(EcoSysObserver o){
+		_sim.removeObserver(o);
 	}
 }

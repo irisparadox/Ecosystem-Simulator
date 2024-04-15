@@ -14,5 +14,4 @@ public class DefaultRegionBuilder extends Builder<Region> {
 	protected DefaultRegion create_instance(JSONObject data) {
 		return new DefaultRegion();
 	}
-
 }

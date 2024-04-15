@@ -1,5 +1,6 @@
 package simulator.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.LinkedList;
@@ -8,16 +9,17 @@ import org.json.JSONObject;
 
 import simulator.factories.Factory;
 
-public class Simulator implements JSONable {
+public class Simulator implements JSONable, Observable<EcoSysObserver> {
 
 	private Factory<Animal> animals_factory;
 	private Factory<Region> regions_factory;
 	private RegionManager region_manager;
 	private List<Animal> animal_list;
+	private List<EcoSysObserver> _observers;
 	private double time;
 
 	public Simulator(int cols, int rows, int width, int height, Factory<Animal> animals_factory,
-			Factory<Region> regions_factory) {
+					 Factory<Region> regions_factory) {
 		this.region_manager = new RegionManager(cols, rows, width, height);
 		this.animal_list = new LinkedList<>();
 		this.animals_factory = animals_factory;
@@ -27,6 +29,7 @@ public class Simulator implements JSONable {
 
 	private void set_region(int row, int col, Region r) {
 		this.region_manager.set_region(row, col, r);
+		notify_on_region_set(row, col, r);
 	}
 
 	public void set_region(int row, int col, JSONObject r_json) {
@@ -42,6 +45,7 @@ public class Simulator implements JSONable {
 	public void add_animal(JSONObject a_json) {
 		Animal a = animals_factory.create_instance(a_json);
 		this.add_animal(a);
+		notify_on_animal_added(a);
 	}
 
 	public MapInfo get_map_info() {
@@ -85,6 +89,8 @@ public class Simulator implements JSONable {
 		for (Animal a : aux) {
 			this.add_animal(a);
 		}
+
+		notify_on_advanced(dt);
 	}
 
 	public JSONObject as_JSON() {
@@ -93,5 +99,57 @@ public class Simulator implements JSONable {
 		o.put("state", this.region_manager.as_JSON());
 
 		return o;
+	}
+
+	public void reset(int cols, int rows, int width, int height){
+		animal_list.clear();
+		region_manager = new RegionManager(cols, rows, width, height);
+		time = 0.0;
+		notify_on_reset();
+	}
+
+	@Override
+	public void addObserver(EcoSysObserver o) {
+		if(!_observers.contains(o)) {
+			_observers.add(o);
+			notify_on_register(o);
+		}
+	}
+
+	@Override
+	public void removeObserver(EcoSysObserver o) {
+		_observers.remove(o);
+	}
+
+	private void notify_on_register(EcoSysObserver o) {
+		List<AnimalInfo> animals = new ArrayList<>(animal_list);
+		o.onRegister(time, region_manager, animals);
+	}
+
+	private void notify_on_reset() {
+		List<AnimalInfo> animals = new ArrayList<>(animal_list);
+		for(EcoSysObserver observer : _observers){
+			observer.onReset(time, region_manager, animals);
+		}
+	}
+
+	private void notify_on_animal_added(AnimalInfo animal){
+		List<AnimalInfo> animals = new ArrayList<>(animal_list);
+		for(EcoSysObserver observer : _observers){
+			observer.onAnimalAdded(time, region_manager, animals, animal);
+		}
+	}
+
+	private void notify_on_region_set(int row, int col, RegionInfo region){
+		for(EcoSysObserver observer : _observers) {
+			observer.onRegionSet(row, col, region_manager, region);
+		}
+	}
+
+	private void notify_on_advanced(double dt) {
+		List<AnimalInfo> animals = new ArrayList<>(animal_list);
+		for(EcoSysObserver observer : _observers) {
+			observer.onAdvance(time, region_manager, animals, dt);
+		}
 	}
 }

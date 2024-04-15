@@ -41,4 +41,9 @@ public class DynamicSupplyRegion extends Region {
 			this._food += dt * _factor;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Dynamic Region";
+	}
 }
