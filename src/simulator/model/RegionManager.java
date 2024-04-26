@@ -76,7 +76,7 @@ public class RegionManager implements AnimalMapView {
 		this._regions[row][col] = r;
 
 		for (Animal a : this._regions[row][col].getAnimals()) {
-			this._animal_region.replace(a, r); 
+			this._animal_region.replace(a, r);
 		}
 	}
 
@@ -205,7 +205,29 @@ public class RegionManager implements AnimalMapView {
 	 */
 	@Override
 	public Iterator<RegionData> iterator() {
-		Iterator<RegionData> iterator;
-		return null;
+		Iterator<RegionData> iterator = new Iterator<>() {
+			int currentCol = 0, currentRow = 0;
+
+			@Override
+			public boolean hasNext() {
+				return currentCol < cols || currentRow < rows;
+			}
+
+			@Override
+			public RegionData next() {
+				RegionData currentRegionData = null;
+				if (hasNext()) {
+					currentRegionData = new RegionData(currentRow, currentCol, _regions[currentRow][currentCol]);
+					currentCol++;
+					if (currentCol >= cols) {
+						currentCol = 0;
+						currentRow++;
+					}
+				}
+				return currentRegionData;
+			}
+		};
+
+		return iterator;
 	}
 }
