@@ -5,8 +5,9 @@ import simulator.control.Controller;
 import simulator.misc.Utils;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 
 public class ControlPanel extends JPanel {
     private Controller _ctrl;
@@ -50,7 +51,7 @@ public class ControlPanel extends JPanel {
         _changeRegionsButton = new JButton();
         _changeRegionsButton.setToolTipText("Change regions");
         _changeRegionsButton.setIcon(new ImageIcon("resources/icons/regions.png"));
-        _mapButton.addActionListener((e) -> _changeRegionsDialog.open(ViewUtils.getWindow(this)));
+        //_mapButton.addActionListener((e) -> _changeRegionsDialog.open(ViewUtils.getWindow(this)));
         _toolaBar.add(_changeRegionsButton);
 
         _toolaBar.addSeparator();
@@ -80,11 +81,34 @@ public class ControlPanel extends JPanel {
         _toolaBar.add(_quitButton);
     }
 
-    private void fileChooserActionEvent(){
+    private void fileChooserActionEvent() throws RuntimeException {
         _fc = new JFileChooser();
         _fc.setCurrentDirectory(new File(System.getProperty("user.dir") + "/resources/examples"));
+        _fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         _fc.showOpenDialog(ViewUtils.getWindow(this));
-        //TODO
+        File selectedFile = _fc.getSelectedFile();
+        JSONObject jsonObject;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(selectedFile));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            reader.close();
+
+            // parse del file al json
+            jsonObject = new JSONObject(stringBuilder.toString());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        int cols = jsonObject.getInt("cols");
+        int rows = jsonObject.getInt("rows");
+        int height = jsonObject.getInt("height");
+        int width = jsonObject.getInt("width");
+        _ctrl.reset(cols, rows, width, height);
+        _ctrl.load_data(jsonObject);
     }
 
     private void mapViewerActionEvent(){

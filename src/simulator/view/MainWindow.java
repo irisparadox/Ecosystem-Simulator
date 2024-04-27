@@ -11,6 +11,7 @@ public class MainWindow extends JFrame {
 
     ControlPanel controlPanel;
     StatusBar statusBar;
+    InfoTable speciesTable;
     private Controller _ctrl;
 
     public MainWindow(Controller ctrl) {
@@ -35,17 +36,17 @@ public class MainWindow extends JFrame {
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
-        //TODO crear la tabla de especies y añadirla a contentPanel.
-        // Usa setPreferredSize(new Dimension(500, 250)) para fijar su tamaño
+        speciesTable = new InfoTable("Species", new SpeciesTableModel(_ctrl));
+        speciesTable.setPreferredSize(new Dimension(500, 250));
+        contentPanel.add(speciesTable, BorderLayout.NORTH);
+
         //TODO crear la tabla de regiones.
         // Usa setPreferredSize(new Dimension(500, 250)) para fijar su tamaño
         //TODO llama a ViewUtils.quit(MainWindow.this) en el método windowClosing
 
         addWindowListener(new WindowListener() {
             @Override
-            public void windowOpened(WindowEvent e) {
-
-            }
+            public void windowOpened(WindowEvent e) {}
 
             @Override
             public void windowClosing(WindowEvent e) {
@@ -53,28 +54,15 @@ public class MainWindow extends JFrame {
             }
 
             @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
+            public void windowClosed(WindowEvent e) {}
             @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
+            public void windowIconified(WindowEvent e) {}
             @Override
-            public void windowDeiconified(WindowEvent e) {
-            }
-
+            public void windowDeiconified(WindowEvent e) {}
             @Override
-            public void windowActivated(WindowEvent e) {
-
-            }
-
+            public void windowActivated(WindowEvent e) {}
             @Override
-            public void windowDeactivated(WindowEvent e) {
-
-            }
+            public void windowDeactivated(WindowEvent e) {}
         });
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         pack();

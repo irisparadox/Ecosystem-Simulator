@@ -11,10 +11,10 @@ import java.awt.*;
 import java.util.List;
 
 public class StatusBar extends JPanel implements EcoSysObserver {
-    private double _simulation_time;
-    private int _animal_count;
-    private int _sim_height, _sim_width;
-    private int _sim_rows, _sim_cols;
+    private JLabel simulation_timer;
+    private JLabel animals_counter;
+    private JLabel dimension_size;
+    private JLabel dimension_cols_rows;
     private Controller _cntrl;
     StatusBar(Controller ctrl) {
         initGUI();
@@ -26,12 +26,12 @@ public class StatusBar extends JPanel implements EcoSysObserver {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.setBorder(BorderFactory.createBevelBorder(1));
         JLabel simulation_timer_label = new JLabel("Time: ");
-        JLabel simulation_timer = new JLabel(String.valueOf(_simulation_time));
+        simulation_timer = new JLabel();
         JLabel animals_label = new JLabel("Total animals: ");
-        JLabel animals_counter = new JLabel(String.valueOf(_animal_count));
+        animals_counter = new JLabel();
         JLabel dimensions_label = new JLabel("Dimensions: ");
-        JLabel dimension_size = new JLabel(_sim_height + "x" + _sim_width);
-        JLabel dimension_cols_rows = new JLabel(_sim_rows + "x" + _sim_cols);
+        dimension_size = new JLabel();
+        dimension_cols_rows = new JLabel();
 
         this.add(simulation_timer_label);
         this.add(simulation_timer);
@@ -64,30 +64,25 @@ public class StatusBar extends JPanel implements EcoSysObserver {
 
     @Override
     public void onAnimalAdded(double time, MapInfo map, List<AnimalInfo> animals, AnimalInfo a) {
-        this._animal_count = animals.size();
+         this.animals_counter.setText(String.valueOf(animals.size()));
     }
 
     @Override
     public void onRegionSet(int row, int col, MapInfo map, RegionInfo r) {
-        this._sim_height = map.get_height();
-        this._sim_width = map.get_width();
-        this._sim_cols = map.get_cols();
-        this._sim_rows = map.get_rows();
+
     }
 
     @Override
     public void onAdvance(double time, MapInfo map, List<AnimalInfo> animals, double dt) {
-        this._simulation_time = time;
-        this._animal_count = animals.size();
+        this.simulation_timer.setText(String.valueOf(time));
+        this.animals_counter.setText(String.valueOf(animals.size()));
     }
 
     private void init(double time, MapInfo map, List<AnimalInfo> animals) {
-        this._sim_height = map.get_height();
-        this._sim_width = map.get_width();
-        this._sim_cols = map.get_cols();
-        this._sim_rows = map.get_rows();
-        this._simulation_time = time;
-        this._animal_count = animals.size();
+        this.dimension_size.setText(map.get_height() + "x" + map.get_width());
+        this.dimension_cols_rows.setText(map.get_rows() + "x" + map.get_cols());
+        this.simulation_timer.setText(String.valueOf(time));
+        this.animals_counter.setText(String.valueOf(animals.size()));
     }
 
 }

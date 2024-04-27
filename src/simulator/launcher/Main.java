@@ -34,6 +34,9 @@ import simulator.control.SelectClosestBuilder;
 import simulator.control.SelectYoungestBuilder;
 import simulator.control.BuilderBasedFactory;
 import simulator.control.*;
+import simulator.view.MainWindow;
+
+import javax.swing.*;
 
 public class Main {
 
@@ -66,7 +69,6 @@ public class Main {
 	//
 	private static Double _time = null;
 	private static String _in_file = null;
-	private static ExecMode _mode = ExecMode.BATCH;
 	public static double dt;
 	// private static double time;
 	private static String outFile;
@@ -156,7 +158,7 @@ public class Main {
 
 	private static void parse_in_file_option(CommandLine line) throws ParseException {
 		_in_file = line.getOptionValue("i");
-		if (_mode == ExecMode.BATCH && _in_file == null) {
+		if (mode == ExecMode.BATCH && _in_file == null) {
 			throw new ParseException("In batch mode an input configuration file is required");
 		}
 	}
@@ -180,9 +182,9 @@ public class Main {
 	private static void parse_simple_viewer_option(CommandLine line) throws ParseException {
 		sv = line.hasOption("sv");
 		if (sv)
-			mode = ExecMode.GUI;
-		else
 			mode = ExecMode.BATCH;
+		else
+			mode = ExecMode.GUI;
 	}
 
 	private static void parse_delta_time_option(CommandLine line) throws ParseException, FileNotFoundException {
@@ -244,13 +246,34 @@ public class Main {
 	}
 
 	private static void start_GUI_mode() throws Exception {
-		throw new UnsupportedOperationException("GUI mode is not ready yet ...");
+		InputStream is = new FileInputStream(new File(_in_file));
+		// 1
+		JSONObject json = load_JSON_file(is);
+
+		// 2
+		FileOutputStream out = new FileOutputStream(new File(outFile));
+		// 3
+		int width = json.getInt("width");
+		int height = json.getInt("height");
+		int rows = json.getInt("rows");
+		int cols = json.getInt("cols");
+		Simulator simulator = new Simulator(cols, rows, width, height, _animal_factory, _region_factory);
+		// 4
+		Controller controller = new Controller(simulator);
+		// 5
+		controller.load_data(json);
+		// 6
+		controller.run(_time, dt, sv, out);
+		// 7
+		is.close();
+		out.close();
+		SwingUtilities.invokeAndWait(() -> new MainWindow(controller));
 	}
 
 	private static void start(String[] args) throws Exception {
 		init_factories();
 		parse_args(args);
-		switch (_mode) {
+		switch (mode) {
 		case BATCH:
 			start_batch_mode();
 			break;

@@ -175,14 +175,14 @@ public class MapViewer extends AbstractMapViewer {
 		}
 
 		if(_currState != null)
-			drawStringWithRect(g, 10, _height - 35, "State: " + _currState.name());
+			drawStringWithRect(g, 10, _height - 20, "State: " + _currState.name());
 
 		drawStringWithRect(g, 10, _height - 10, "Time: " + String.format("%.3f", time));
 
-		// TODO Dibujar la información de todas la especies. Al final de cada iteración
-		// poner el contador de la especie correspondiente a 0 (para resetear el cuento)
+		int y = _height - 30;
 		for (Entry<String, SpeciesInfo> e : _kindsInfo.entrySet()) {
-			//drawStringWithRect(g, 10, _height, e.getKey());
+			drawStringWithRect(g, 10, y, e.getKey() + ": " + e.getValue()._count);
+			y -= 10;
 			SpeciesInfo info = e.getValue();
 			info._count = 0;
 			e.setValue(info);

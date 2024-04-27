@@ -28,36 +28,7 @@ public class Controller {
 
 	public void load_data(JSONObject data) {
 		JSONArray animals = data.getJSONArray("animals");
-
-		// 1
-		if (data.has("regions")) {
-			JSONArray regions = data.getJSONArray("regions");
-			Iterator<?> a = regions.iterator();
-
-			JSONObject region;
-			int rf, rt, cf, ct;
-			JSONObject spec;
-			while (a.hasNext()) {
-				region = (JSONObject) a.next();
-
-				JSONArray row = region.getJSONArray("row");
-				JSONArray col = region.getJSONArray("col");
-				spec = region.getJSONObject("spec");
-
-				rf = row.getInt(0);
-				rt = row.getInt(1);
-				cf = col.getInt(0);
-				ct = col.getInt(1);
-
-				for (int i = rf; i < rt; i++) {
-					for (int j = cf; j < ct; j++) {
-						_sim.set_region(i, j, spec);
-					}
-				}
-			}
-
-		}
-		// 2
+		set_regions(data);
 
 		for (int i = 0; i < animals.length(); i++) {
 			for (int j = 0; j < animals.getJSONObject(i).getInt("amount"); j++) {
@@ -79,7 +50,7 @@ public class Controller {
 		o.put("in", _sim.as_JSON());
 
 		while (_sim.get_time() < t) {
-			_sim.advance(dt);
+			advance(dt);
 
 			if (sv)
 				view.update(to_animals_info(_sim.get_animals()), _sim.get_time(), dt);
@@ -112,7 +83,7 @@ public class Controller {
 	}
 
 	public void set_regions(JSONObject rs){
-
+		regionSetter(rs);
 	}
 
 	public void advance(double dt) {
@@ -125,5 +96,35 @@ public class Controller {
 
 	public void removeObserver(EcoSysObserver o){
 		_sim.removeObserver(o);
+	}
+
+	private void regionSetter(JSONObject data) {
+		if (data.has("regions")) {
+			JSONArray regions = data.getJSONArray("regions");
+			Iterator<?> a = regions.iterator();
+
+			JSONObject region;
+			int rf, rt, cf, ct;
+			JSONObject spec;
+			while (a.hasNext()) {
+				region = (JSONObject) a.next();
+
+				JSONArray row = region.getJSONArray("row");
+				JSONArray col = region.getJSONArray("col");
+				spec = region.getJSONObject("spec");
+
+				rf = row.getInt(0);
+				rt = row.getInt(1);
+				cf = col.getInt(0);
+				ct = col.getInt(1);
+
+				for (int i = rf; i < rt; i++) {
+					for (int j = cf; j < ct; j++) {
+						_sim.set_region(i, j, spec);
+					}
+				}
+			}
+
+		}
 	}
 }
