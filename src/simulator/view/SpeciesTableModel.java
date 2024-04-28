@@ -66,33 +66,40 @@ public class SpeciesTableModel extends AbstractTableModel implements EcoSysObser
 
     @Override
     public void onRegister(double time, MapInfo map, List<AnimalInfo> animals) {
-        for(AnimalInfo animal : animals) {
-            countAnimalOnTable(animal);
-        }
+        update(animals);
     }
 
     @Override
     public void onReset(double time, MapInfo map, List<AnimalInfo> animals) {
         _data.clear();
-        _cols = 0;
+        _columnLabels = getColumnLabels();
+        _cols = _columnLabels.length;
         _rows = 0;
+        this.fireTableDataChanged();
     }
 
     @Override
     public void onAnimalAdded(double time, MapInfo map, List<AnimalInfo> animals, AnimalInfo a) {
         countAnimalOnTable(a);
+        _rows = _data.size();
+        this.fireTableDataChanged();
     }
 
     @Override
     public void onRegionSet(int row, int col, MapInfo map, RegionInfo r) {
-
     }
 
     @Override
     public void onAdvance(double time, MapInfo map, List<AnimalInfo> animals, double dt) {
+        update(animals);
+    }
+
+    private void update(List<AnimalInfo> animals){
+        _data.clear();
         for(AnimalInfo animal : animals) {
             countAnimalOnTable(animal);
         }
+        this.fireTableDataChanged();
     }
 
     private void countAnimalOnTable(AnimalInfo animal) {

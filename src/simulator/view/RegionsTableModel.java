@@ -11,7 +11,7 @@ import java.util.Map;
 public class RegionsTableModel extends AbstractTableModel implements EcoSysObserver {
         private Controller _cntrl;
         private int _cols, _rows;
-        private Map<Integer, Map<Integer, Map<Diet, Integer>>> _data;
+        private Map<Integer, Map<Integer, Map<String, Map<Diet, Integer>>>> _data;
     RegionsTableModel(Controller ctrl) {
         // TODO inicializar estructuras de datos correspondientes
         _cntrl = ctrl;

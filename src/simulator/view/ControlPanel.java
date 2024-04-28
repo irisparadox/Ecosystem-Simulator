@@ -2,6 +2,7 @@ package simulator.view;
 
 import org.json.JSONObject;
 import simulator.control.Controller;
+import simulator.launcher.Main;
 import simulator.misc.Utils;
 
 import javax.swing.*;
@@ -21,6 +22,8 @@ public class ControlPanel extends JPanel {
     private JButton _playButton;
     private JButton _stopButton;
     private JButton _quitButton;
+    private JSpinner _steps;
+    private JTextField _deltaTime;
 
     ControlPanel(Controller ctrl) {
         _ctrl = ctrl;
@@ -70,6 +73,26 @@ public class ControlPanel extends JPanel {
         _stopButton.addActionListener((e) -> stopSimulationActionEvent());
         _toolaBar.add(_stopButton);
 
+        // Steps JSpinner
+        _toolaBar.add(Box.createGlue());
+        JLabel stepsLabel = new JLabel("Steps: ");
+        _toolaBar.add(stepsLabel);
+        _steps = new JSpinner(new SpinnerNumberModel(10000, 0, 10000, 10));
+        _steps.setPreferredSize(new Dimension(80,40));
+        _steps.setMaximumSize(new Dimension(80,40));
+        _toolaBar.add(_steps);
+
+        _toolaBar.addSeparator();
+
+        // Delta time
+
+        JLabel dtLabel = new JLabel("Delta-time: ");
+        _toolaBar.add(dtLabel);
+        _deltaTime = new JTextField(String.valueOf(Main.dt));
+        _deltaTime.setPreferredSize(new Dimension(80,40));
+        _deltaTime.setMaximumSize(new Dimension(80,40));
+        _toolaBar.add(_deltaTime);
+
         // Quit Button
 
         _toolaBar.add(Box.createGlue()); // this aligns the button to the right
@@ -112,14 +135,38 @@ public class ControlPanel extends JPanel {
     }
 
     private void mapViewerActionEvent(){
-
+        MapWindow mapWindow = new MapWindow(ViewUtils.getWindow(this), _ctrl);
     }
 
-    private void runSimulationActionEvent(){
-
+    private void runSimulationActionEvent() {
+        change_buttons_state(false);
+        _stopped = false;
+        run_sim((int) _steps.getValue(), Double.parseDouble(_deltaTime.getText()));
     }
 
     private void stopSimulationActionEvent() {
+        _stopped = true;
+    }
 
+    private void run_sim(int n, double dt) {
+        if (n > 0 && !_stopped) {
+            try {
+                _ctrl.advance(dt);
+                SwingUtilities.invokeLater(() -> run_sim(n - 1, dt));
+            } catch (Exception e) {
+                ViewUtils.showErrorMsg(e.getMessage());
+                change_buttons_state(true);
+                _stopped = true;
+            }
+        } else {
+            change_buttons_state(true);
+            _stopped = true;
+        }
+    }
+
+    private void change_buttons_state(boolean state){
+        _fcButton.setEnabled(state);
+        _changeRegionsButton.setEnabled(state);
+        _playButton.setEnabled(state);
     }
 }

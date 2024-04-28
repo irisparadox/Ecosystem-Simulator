@@ -263,8 +263,6 @@ public class Main {
 		// 5
 		controller.load_data(json);
 		// 6
-		controller.run(_time, dt, sv, out);
-		// 7
 		is.close();
 		out.close();
 		SwingUtilities.invokeAndWait(() -> new MainWindow(controller));

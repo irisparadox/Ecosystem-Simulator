@@ -10,10 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 @SuppressWarnings("serial")
@@ -132,8 +130,8 @@ public class MapViewer extends AbstractMapViewer {
 		// s: show animals of a specific state
 
 		if(_showHelp){
-			g.drawString("[H]: Toggle help", 10, 10);
-			g.drawString("[S]: Cycle between animals of a specific state", 10, 15);
+			g.drawString("[H]: Toggle help", 10, 15);
+			g.drawString("[S]: Cycle between animals of a specific state", 10, 30);
 		}
 
 	}
@@ -171,18 +169,23 @@ public class MapViewer extends AbstractMapViewer {
 			int size = (int) (a.get_age() / 2) + 2;
 			int x = (int) a.get_position().getX();
 			int y = (int) a.get_position().getY();
+			g.setColor(esp_info._color);
 			g.fillRoundRect(x, y, size, size, 1, 1);
 		}
 
-		if(_currState != null)
-			drawStringWithRect(g, 10, _height - 20, "State: " + _currState.name());
+		if(_currState != null) {
+			g.setColor(Color.RED);
+			drawStringWithRect(g, 10, _height - 30, "State: " + _currState.name());
+		}
 
+		g.setColor(Color.MAGENTA);
 		drawStringWithRect(g, 10, _height - 10, "Time: " + String.format("%.3f", time));
 
-		int y = _height - 30;
+		int y = _height - 50;
 		for (Entry<String, SpeciesInfo> e : _kindsInfo.entrySet()) {
+			g.setColor(e.getValue()._color);
 			drawStringWithRect(g, 10, y, e.getKey() + ": " + e.getValue()._count);
-			y -= 10;
+			y -= 20;
 			SpeciesInfo info = e.getValue();
 			info._count = 0;
 			e.setValue(info);
@@ -198,7 +201,7 @@ public class MapViewer extends AbstractMapViewer {
 
 	@Override
 	public void update(List<AnimalInfo> objs, Double time) {
-		_objs = objs;
+		_objs = new LinkedList<>(objs);
 		_time = time;
 		repaint();
 	}

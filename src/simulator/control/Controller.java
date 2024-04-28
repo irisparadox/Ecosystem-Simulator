@@ -80,25 +80,10 @@ public class Controller {
 
 	public void reset(int cols, int rows, int width, int height) {
 		_sim.reset(cols, rows, width, height);
+
 	}
 
-	public void set_regions(JSONObject rs){
-		regionSetter(rs);
-	}
-
-	public void advance(double dt) {
-		_sim.advance(dt);
-	}
-
-	public void addObserver(EcoSysObserver o){
-		_sim.addObserver(o);
-	}
-
-	public void removeObserver(EcoSysObserver o){
-		_sim.removeObserver(o);
-	}
-
-	private void regionSetter(JSONObject data) {
+	private void set_regions(JSONObject data){
 		if (data.has("regions")) {
 			JSONArray regions = data.getJSONArray("regions");
 			Iterator<?> a = regions.iterator();
@@ -126,5 +111,17 @@ public class Controller {
 			}
 
 		}
+	}
+
+	public void advance(double dt) {
+		_sim.advance(dt);
+	}
+
+	public void addObserver(EcoSysObserver o){
+		_sim.addObserver(o);
+	}
+
+	public void removeObserver(EcoSysObserver o){
+		_sim.removeObserver(o);
 	}
 }

@@ -149,7 +149,7 @@ public class RegionManager implements AnimalMapView {
 			}
 		}
 
-		o.put("regiones", regiones);
+		o.put("regions", regiones);
 
 		return o;
 	}

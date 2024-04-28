@@ -81,7 +81,7 @@ public class Simulator implements JSONable, Observable<EcoSysObserver> {
 		// 4.
 		this.region_manager.update_all_regions(dt);
 		// 5
-		List<Animal> aux = new LinkedList<Animal>();
+		List<Animal> aux = new LinkedList<>();
 		for (Animal a : this.animal_list) {
 			if (a.is_pregnent()) {
 				aux.add(a.deliver_baby());

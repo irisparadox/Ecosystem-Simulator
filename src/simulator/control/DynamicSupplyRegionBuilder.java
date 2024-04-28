@@ -11,7 +11,7 @@ public class DynamicSupplyRegionBuilder extends Builder<Region> {
 	private static final double FOOD_DEFAULT = 100.0;
 	private static final double FACTOR_DEFAULT = 2.0;
 	public DynamicSupplyRegionBuilder() {
-		super("dynamic", "region dinamica");
+		super("dynamic", "Dynamic Region Object");
 		this._factor = FACTOR_DEFAULT;
 		this._food = FOOD_DEFAULT;
 	}
@@ -25,7 +25,6 @@ public class DynamicSupplyRegionBuilder extends Builder<Region> {
 
 	@Override
 	protected void fill_in_data(JSONObject o){
-		//TODO
 		o.put("factor", "food increase factor (optional, default " + FACTOR_DEFAULT + ")");
 		o.put("food", "initial amount of food (optional, default " + FOOD_DEFAULT + ")");
 	}

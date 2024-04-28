@@ -69,19 +69,19 @@ public class StatusBar extends JPanel implements EcoSysObserver {
 
     @Override
     public void onRegionSet(int row, int col, MapInfo map, RegionInfo r) {
-
+        System.out.println("a");
     }
 
     @Override
     public void onAdvance(double time, MapInfo map, List<AnimalInfo> animals, double dt) {
-        this.simulation_timer.setText(String.valueOf(time));
+        this.simulation_timer.setText(String.format("%.3f", time));
         this.animals_counter.setText(String.valueOf(animals.size()));
     }
 
     private void init(double time, MapInfo map, List<AnimalInfo> animals) {
-        this.dimension_size.setText(map.get_height() + "x" + map.get_width());
-        this.dimension_cols_rows.setText(map.get_rows() + "x" + map.get_cols());
-        this.simulation_timer.setText(String.valueOf(time));
+        this.dimension_size.setText(map.get_width() + "x" + map.get_height());
+        this.dimension_cols_rows.setText(map.get_cols() + "x" + map.get_rows());
+        this.simulation_timer.setText(String.format("%.3f", time));
         this.animals_counter.setText(String.valueOf(animals.size()));
     }
 
