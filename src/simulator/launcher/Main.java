@@ -146,6 +146,10 @@ public class Main {
 						+ _default_delta_time + ".")
 				.build());
 
+		// m
+		cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg()
+				.desc("Choose whether to use the Batch Mode or GUI mode. Default mode is GUI.").build());
+
 		return cmdLineOptions;
 	}
 
@@ -190,7 +194,7 @@ public class Main {
 		sv = line.hasOption("sv");
 		if (sv)
 			mode = ExecMode.BATCH;
-		else
+		else if(mode != ExecMode.BATCH)
 			mode = ExecMode.GUI;
 	}
 
@@ -246,32 +250,37 @@ public class Main {
 		// 5
 		controller.load_data(json);
 		// 6
-		controller.run(_time, dt, sv, out);
+		controller.run(_time, dt, sv || mode == ExecMode.BATCH, out);
 		// 7
 		is.close();
 		out.close();
 	}
 
 	private static void start_GUI_mode() throws Exception {
-		InputStream is = new FileInputStream(new File(_in_file));
-		// 1
-		JSONObject json = load_JSON_file(is);
+		if(_in_file != null) {
+			InputStream is = new FileInputStream(new File(_in_file));
+			// 1
+			JSONObject json = load_JSON_file(is);
 
-		// 2
-		FileOutputStream out = new FileOutputStream(new File(outFile));
-		// 3
-		int width = json.getInt("width");
-		int height = json.getInt("height");
-		int rows = json.getInt("rows");
-		int cols = json.getInt("cols");
-		Simulator simulator = new Simulator(cols, rows, width, height, _animal_factory, _region_factory);
-		// 4
-		Controller controller = new Controller(simulator);
-		// 5
-		controller.load_data(json);
-		// 6
-		is.close();
-		out.close();
+			// 2
+			FileOutputStream out = new FileOutputStream(new File(outFile));
+			// 3
+			int width = json.getInt("width");
+			int height = json.getInt("height");
+			int rows = json.getInt("rows");
+			int cols = json.getInt("cols");
+			Simulator simulator = new Simulator(cols, rows, width, height, _animal_factory, _region_factory);
+			// 4
+			controller = new Controller(simulator);
+			// 5
+			controller.load_data(json);
+			// 6
+			is.close();
+			out.close();
+		} else {
+			Simulator simulator = new Simulator(_animal_factory, _region_factory);
+			controller = new Controller(simulator);
+		}
 		SwingUtilities.invokeAndWait(() -> new MainWindow(controller));
 	}
 
@@ -279,12 +288,12 @@ public class Main {
 		init_factories();
 		parse_args(args);
 		switch (mode) {
-		case BATCH:
-			start_batch_mode();
-			break;
-		case GUI:
-			start_GUI_mode();
-			break;
+			case BATCH:
+				start_batch_mode();
+				break;
+			case GUI:
+				start_GUI_mode();
+				break;
 		}
 	}
 

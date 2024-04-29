@@ -21,7 +21,18 @@ public class RegionManager implements AnimalMapView {
 	private Map<Animal, Region> _animal_region;
 	private int currentCol, currentRow;
 	private Iterator<RegionData> iterator;
-
+	public RegionManager() {
+		this.cols = 0;
+		this.rows = 0;
+		this.map_height = 0;
+		this.map_width = 0;
+		this.region_height = 0;
+		this.region_width = 0;
+		this._regions = new Region[rows][cols];
+		this._animal_region = new HashMap<>();
+		this.currentRow = 0;
+		this.currentCol = 0;
+	}
 	public RegionManager(int cols, int rows, int width, int height) {
 		this.cols = cols;
 		this.rows = rows;
