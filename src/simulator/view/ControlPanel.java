@@ -27,6 +27,7 @@ public class ControlPanel extends JPanel {
 
     ControlPanel(Controller ctrl) {
         _ctrl = ctrl;
+        _changeRegionsDialog = new ChangeRegionsDialog(_ctrl);
         initGUI();
     }
     private void initGUI() {
@@ -54,7 +55,7 @@ public class ControlPanel extends JPanel {
         _changeRegionsButton = new JButton();
         _changeRegionsButton.setToolTipText("Change regions");
         _changeRegionsButton.setIcon(new ImageIcon("resources/icons/regions.png"));
-        //_mapButton.addActionListener((e) -> _changeRegionsDialog.open(ViewUtils.getWindow(this)));
+        _changeRegionsButton.addActionListener((e) -> _changeRegionsDialog.open(ViewUtils.getWindow(this)));
         _toolaBar.add(_changeRegionsButton);
 
         _toolaBar.addSeparator();
@@ -110,6 +111,8 @@ public class ControlPanel extends JPanel {
         _fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         _fc.showOpenDialog(ViewUtils.getWindow(this));
         File selectedFile = _fc.getSelectedFile();
+        if(selectedFile == null)
+            return;
         JSONObject jsonObject;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(selectedFile));
@@ -131,6 +134,7 @@ public class ControlPanel extends JPanel {
         int height = jsonObject.getInt("height");
         int width = jsonObject.getInt("width");
         _ctrl.reset(cols, rows, width, height);
+        _changeRegionsDialog = new ChangeRegionsDialog(_ctrl);
         _ctrl.load_data(jsonObject);
     }
 

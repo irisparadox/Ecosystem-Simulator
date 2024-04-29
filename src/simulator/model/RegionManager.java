@@ -19,6 +19,8 @@ public class RegionManager implements AnimalMapView {
 	private int region_height;
 	private Region[][] _regions;
 	private Map<Animal, Region> _animal_region;
+	private int currentCol, currentRow;
+	private Iterator<RegionData> iterator;
 
 	public RegionManager(int cols, int rows, int width, int height) {
 		this.cols = cols;
@@ -27,16 +29,17 @@ public class RegionManager implements AnimalMapView {
 		this.map_height = height;
 		this.region_height = height / rows + (height % rows != 0 ? 1 : 0);
 		this.region_width = width / cols + (width % cols != 0 ? 1 : 0);
-		this._regions = new Region[cols][rows];
+		this._regions = new Region[rows][cols];
 		this.ini_regions();
 		this._animal_region = new HashMap<>();
-		;
+		this.currentCol = 0;
+		this.currentRow = 0;
 	}
 
 	private void ini_regions() {
 		for (int i = 0; i < cols; i++) {
 			for (int j = 0; j < rows; j++) {
-				this._regions[i][j] = new DefaultRegion();
+				this._regions[j][i] = new DefaultRegion();
 			}
 		}
 	}
@@ -99,8 +102,8 @@ public class RegionManager implements AnimalMapView {
 		int x = (int) aux.getX();
 		int y = (int) aux.getY();
 
-		this._regions[x][y].add_animal(a);
-		this._animal_region.put(a, this._regions[x][y]);
+		this._regions[y][x].add_animal(a);
+		this._animal_region.put(a, this._regions[y][x]);
 	}
 
 	void unregister_animal(Animal a) {
@@ -117,11 +120,11 @@ public class RegionManager implements AnimalMapView {
 		int x = (int) aux.getX();
 		int y = (int) aux.getY();
 
-		if (this._animal_region.get(a) != this._regions[x][y]) {
+		if (this._animal_region.get(a) != this._regions[y][x]) {
 			this._animal_region.get(a).remove_animal(a);
-			this._regions[x][y].add_animal(a);
+			this._regions[y][x].add_animal(a);
 
-			this._animal_region.replace(a, _regions[x][y]);
+			this._animal_region.replace(a, _regions[y][x]);
 		}
 
 	}
@@ -129,7 +132,7 @@ public class RegionManager implements AnimalMapView {
 	void update_all_regions(double dt) {
 		for (int i = 0; i < this.rows; i++) {
 			for (int j = 0; j < this.cols; j++) {
-				this._regions[j][i].update(dt);
+				this._regions[i][j].update(dt);
 			}
 		}
 	}
@@ -143,7 +146,7 @@ public class RegionManager implements AnimalMapView {
 				JSONObject json = new JSONObject();
 				json.put("row", j);
 				json.put("col", i);
-				json.put("data", _regions[i][j].as_JSON());
+				json.put("data", _regions[j][i].as_JSON());
 
 				regiones.put(json);
 			}
@@ -161,7 +164,7 @@ public class RegionManager implements AnimalMapView {
 		int x = (int) aux.getX();
 		int y = (int) aux.getY();
 
-		return this._regions[x][y].get_food(a, dt);
+		return this._regions[y][x].get_food(a, dt);
 	}
 
 	@Override
@@ -185,7 +188,7 @@ public class RegionManager implements AnimalMapView {
 
 		for (int i = xmin; i < xmax; i++) {
 			for (int j = ymin; j < ymax; j++) {
-				List<Animal> animales = this._regions[i][j].getAnimals();
+				List<Animal> animales = this._regions[j][i].getAnimals();
 				for (Animal actualAnimal : animales) {
 					if (filter.test(actualAnimal) && actualAnimal.get_position().minus(a.get_position())
 							.magnitude() <= actualAnimal.get_sight_range()) {
@@ -205,17 +208,15 @@ public class RegionManager implements AnimalMapView {
 	 */
 	@Override
 	public Iterator<RegionData> iterator() {
-		Iterator<RegionData> iterator = new Iterator<>() {
-			int currentCol = 0, currentRow = 0;
-
+		iterator = new Iterator<>() {
 			@Override
 			public boolean hasNext() {
-				return currentCol < cols || currentRow < rows;
+				return currentRow < rows;
 			}
 
 			@Override
 			public RegionData next() {
-				RegionData currentRegionData = null;
+				RegionData currentRegionData;
 				if (hasNext()) {
 					currentRegionData = new RegionData(currentRow, currentCol, _regions[currentRow][currentCol]);
 					currentCol++;
@@ -223,6 +224,11 @@ public class RegionManager implements AnimalMapView {
 						currentCol = 0;
 						currentRow++;
 					}
+				} else {
+					currentCol = 0;
+					currentRow = 0;
+					currentRegionData = new RegionData(currentRow, currentCol, _regions[currentRow][currentCol]);
+					currentCol++;
 				}
 				return currentRegionData;
 			}

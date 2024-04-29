@@ -83,7 +83,7 @@ public class Controller {
 
 	}
 
-	private void set_regions(JSONObject data){
+	public void set_regions(JSONObject data){
 		if (data.has("regions")) {
 			JSONArray regions = data.getJSONArray("regions");
 			Iterator<?> a = regions.iterator();

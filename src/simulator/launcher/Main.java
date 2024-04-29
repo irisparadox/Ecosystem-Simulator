@@ -91,6 +91,7 @@ public class Main {
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine line = parser.parse(cmdLineOptions, args);
+			parse_mode_option(line);
 			parse_help_option(line, cmdLineOptions);
 			parse_in_file_option(line);
 			parse_time_option(line);
@@ -146,6 +147,12 @@ public class Main {
 				.build());
 
 		return cmdLineOptions;
+	}
+
+	private static void parse_mode_option(CommandLine line) {
+		if(line.hasOption("m")) {
+			mode = ExecMode.valueOf(line.getOptionValue("m"));
+		} else mode = ExecMode.GUI;
 	}
 
 	private static void parse_help_option(CommandLine line, Options cmdLineOptions) {

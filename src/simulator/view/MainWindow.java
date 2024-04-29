@@ -12,6 +12,7 @@ public class MainWindow extends JFrame {
     ControlPanel controlPanel;
     StatusBar statusBar;
     InfoTable speciesTable;
+    InfoTable regionsTable;
     private Controller _ctrl;
 
     public MainWindow(Controller ctrl) {
@@ -41,9 +42,10 @@ public class MainWindow extends JFrame {
 
         contentPanel.add(speciesTable, BorderLayout.PAGE_START);
 
-        //TODO crear la tabla de regiones.
-        // Usa setPreferredSize(new Dimension(500, 250)) para fijar su tamaño
-        //TODO llama a ViewUtils.quit(MainWindow.this) en el método windowClosing
+        regionsTable = new InfoTable("Regions", new RegionsTableModel(_ctrl));
+        regionsTable.setPreferredSize(new Dimension(500, 250));
+
+        contentPanel.add(regionsTable, BorderLayout.PAGE_END);
 
         addWindowListener(new WindowListener() {
             @Override
